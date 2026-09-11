@@ -4,6 +4,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    console.error(
+      "Refusing to run demo seed data against a production database (NODE_ENV=production). " +
+        "Use `npm run db:create-admin` to create a real platform admin instead."
+    );
+    process.exit(1);
+  }
+
   const passwordHash = await bcrypt.hash("password123", 10);
 
   const tenant = await prisma.tenant.upsert({
