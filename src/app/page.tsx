@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getAppSettings } from "@/lib/settings";
 
+export const dynamic = "force-dynamic";
+
 const FEATURES = [
   {
     title: "A booking page in minutes",
