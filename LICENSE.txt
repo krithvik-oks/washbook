@@ -1,0 +1,9 @@
+Copyright (c) 2026. All rights reserved.
+
+This software is licensed, not sold. Your use of this item is governed by
+the license (Regular or Extended) you purchased at the point of sale on the
+marketplace listing (e.g. the Envato Market License Agreement for CodeCanyon
+purchases: https://help.market.envato.com/hc/en-us/articles/205428256).
+
+Redistribution, resale, or sublicensing of this source code, in whole or in
+part, outside the terms of that license agreement is not permitted.
