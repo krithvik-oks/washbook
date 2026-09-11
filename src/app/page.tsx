@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAppSettings } from "@/lib/settings";
+import { DemoAdminBanner } from "@/components/demo-admin-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,10 @@ export default async function Home() {
             </Link>
           </div>
           <p className="mt-6 text-xs text-[var(--muted)]">14-day free trial. No card required.</p>
+
+          <div className="mt-10 w-full">
+            <DemoAdminBanner />
+          </div>
         </section>
 
         <section className="border-t border-[var(--border)] bg-[var(--accent-soft)]">
