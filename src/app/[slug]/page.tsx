@@ -30,6 +30,7 @@ export default async function TenantBookingPage({
           <div className="mt-8">
             <BookingWidget
               slug={tenant.slug}
+              timezone={tenant.timezone}
               services={tenant.services.map((s) => ({
                 id: s.id,
                 name: s.name,

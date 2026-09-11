@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { TimezoneSelect, guessBrowserTimezone } from "@/components/timezone-select";
 
 export function SignupForm() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export function SignupForm() {
   const [ownerName, setOwnerName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [timezone, setTimezone] = useState(guessBrowserTimezone);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +24,7 @@ export function SignupForm() {
     const res = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ businessName, ownerName, email, password }),
+      body: JSON.stringify({ businessName, ownerName, email, password, timezone }),
     });
 
     if (!res.ok) {
@@ -94,6 +96,9 @@ export function SignupForm() {
             className="input"
             placeholder="At least 8 characters"
           />
+        </Field>
+        <Field label="Timezone">
+          <TimezoneSelect value={timezone} onChange={setTimezone} />
         </Field>
 
         {error && <p className="text-sm text-[var(--danger)]">{error}</p>}

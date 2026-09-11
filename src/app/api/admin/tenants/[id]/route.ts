@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession, UnauthorizedError } from "@/lib/session";
+import { isValidTimeZone } from "@/lib/timezone";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -34,6 +35,7 @@ const updateSchema = z.object({
   phone: z.string().nullable().optional(),
   address: z.string().nullable().optional(),
   capacity: z.coerce.number().int().min(1).max(50).optional(),
+  timezone: z.string().refine(isValidTimeZone, "Invalid timezone").optional(),
   subscriptionStatus: z.enum(["TRIALING", "ACTIVE", "PAST_DUE", "CANCELED"]).optional(),
 });
 

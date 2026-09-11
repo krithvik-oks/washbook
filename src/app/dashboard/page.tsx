@@ -19,6 +19,7 @@ const PAGE_SIZE = 10;
 export default function DashboardBookingsPage() {
   const [bookings, setBookings] = useState<Booking[] | null>(null);
   const [total, setTotal] = useState(0);
+  const [timezone, setTimezone] = useState<string>();
 
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("");
@@ -34,6 +35,7 @@ export default function DashboardBookingsPage() {
     const data = await res.json();
     setBookings(data.bookings);
     setTotal(data.total);
+    setTimezone(data.timezone);
   }
 
   useEffect(() => {
@@ -109,7 +111,11 @@ export default function DashboardBookingsPage() {
                 {bookings.map((b) => (
                   <tr key={b.id}>
                     <td>
-                      {new Date(b.startTime).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                      {new Date(b.startTime).toLocaleString(undefined, {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZone: timezone,
+                      })}
                     </td>
                     <td>{b.service.name}</td>
                     <td>

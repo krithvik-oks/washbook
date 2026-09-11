@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { zonedTimeToUtc, dayOfWeekForDateStr, addDaysToDateStr } from "@/lib/timezone";
 
 const SLOT_GRANULARITY_MINUTES = 30;
 
@@ -7,11 +8,10 @@ function parseTimeToMinutes(time: string): number {
   return h * 60 + m;
 }
 
-function dateAtMinutes(day: Date, minutes: number): Date {
-  const d = new Date(day);
-  d.setHours(0, 0, 0, 0);
-  d.setMinutes(minutes);
-  return d;
+function minutesToTimeStr(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
 export interface SlotCandidate {
@@ -20,35 +20,35 @@ export interface SlotCandidate {
 }
 
 /**
- * Returns bookable start times for a tenant/service on a given calendar day,
- * respecting operating hours and bay capacity.
+ * Returns bookable start times for a tenant/service on a given calendar day
+ * (as experienced in the tenant's own timezone — not the server's), respecting
+ * operating hours and bay capacity.
  */
 export async function getAvailableSlots(
   tenantId: string,
   serviceId: string,
-  day: Date
+  dateStr: string
 ): Promise<SlotCandidate[]> {
   const [tenant, service, rule] = await Promise.all([
     prisma.tenant.findUnique({ where: { id: tenantId } }),
     prisma.service.findFirst({ where: { id: serviceId, tenantId, active: true } }),
     prisma.availabilityRule.findFirst({
-      where: { tenantId, dayOfWeek: day.getDay() },
+      where: { tenantId, dayOfWeek: dayOfWeekForDateStr(dateStr) },
     }),
   ]);
 
   if (!tenant || !service || !rule) return [];
 
-  const dayStart = new Date(day);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(day);
-  dayEnd.setHours(23, 59, 59, 999);
+  const timeZone = tenant.timezone;
+  const dayStart = zonedTimeToUtc(dateStr, "00:00:00", timeZone);
+  const dayEnd = zonedTimeToUtc(addDaysToDateStr(dateStr, 1), "00:00:00", timeZone);
 
   const existingBookings = await prisma.booking.findMany({
     where: {
       tenantId,
       status: "CONFIRMED",
-      startTime: { lte: dayEnd },
-      endTime: { gte: dayStart },
+      startTime: { lt: dayEnd },
+      endTime: { gt: dayStart },
     },
     select: { startTime: true, endTime: true },
   });
@@ -58,16 +58,17 @@ export async function getAvailableSlots(
   const duration = service.durationMinutes;
 
   const slots: SlotCandidate[] = [];
+  const now = new Date();
 
   for (
     let start = openMinutes;
     start + duration <= closeMinutes;
     start += SLOT_GRANULARITY_MINUTES
   ) {
-    const startTime = dateAtMinutes(day, start);
-    const endTime = dateAtMinutes(day, start + duration);
+    const startTime = zonedTimeToUtc(dateStr, minutesToTimeStr(start), timeZone);
+    const endTime = zonedTimeToUtc(dateStr, minutesToTimeStr(start + duration), timeZone);
 
-    if (startTime < new Date()) continue;
+    if (startTime < now) continue;
 
     const overlapping = existingBookings.filter(
       (b) => b.startTime < endTime && b.endTime > startTime

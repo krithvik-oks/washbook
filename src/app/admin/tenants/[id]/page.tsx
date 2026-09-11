@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { TimezoneSelect } from "@/components/timezone-select";
 
 interface TenantDetail {
   id: string;
@@ -10,6 +11,7 @@ interface TenantDetail {
   phone: string | null;
   address: string | null;
   capacity: number;
+  timezone: string;
   subscriptionStatus: string;
   users: { id: string; name: string; email: string; role: string }[];
   services: { id: string; name: string; durationMinutes: number; price: string; active: boolean }[];
@@ -142,6 +144,16 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
             />
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
+            Timezone
+            <TimezoneSelect
+              value={tenant.timezone}
+              onChange={(timezone) => {
+                setTenant({ ...tenant, timezone });
+                saveTenant({ timezone });
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Subscription status
             <select
               className="input"
@@ -259,7 +271,11 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
               {tenant.bookings.map((b) => (
                 <tr key={b.id}>
                   <td>
-                    {new Date(b.startTime).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                    {new Date(b.startTime).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                      timeZone: tenant.timezone,
+                    })}
                   </td>
                   <td>{b.service.name}</td>
                   <td>

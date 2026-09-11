@@ -38,7 +38,7 @@ export async function GET(req: Request) {
         take: pageSize,
         include: {
           service: { select: { name: true } },
-          tenant: { select: { id: true, name: true, slug: true } },
+          tenant: { select: { id: true, name: true, slug: true, timezone: true } },
         },
       }),
       prisma.booking.count({ where }),

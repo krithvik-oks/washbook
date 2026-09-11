@@ -3,12 +3,14 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
+import { isValidTimeZone } from "@/lib/timezone";
 
 const signupSchema = z.object({
   businessName: z.string().min(2),
   ownerName: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(8),
+  timezone: z.string().refine(isValidTimeZone, "Invalid timezone"),
 });
 
 export async function POST(req: Request) {
@@ -17,7 +19,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const { businessName, ownerName, email, password } = parsed.data;
+  const { businessName, ownerName, email, password, timezone } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -33,6 +35,7 @@ export async function POST(req: Request) {
     data: {
       slug,
       name: businessName,
+      timezone,
       subscriptionStatus: "TRIALING",
       trialEndsAt,
       users: {

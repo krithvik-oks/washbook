@@ -1,13 +1,18 @@
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import { zonedTimeToUtc } from "../src/lib/timezone";
 
 const prisma = new PrismaClient();
 
-function dateAt(daysFromNow: number, hour: number, minute = 0): Date {
+function dateStrOffset(daysFromNow: number): string {
   const d = new Date();
-  d.setDate(d.getDate() + daysFromNow);
-  d.setHours(hour, minute, 0, 0);
-  return d;
+  d.setUTCDate(d.getUTCDate() + daysFromNow);
+  return d.toISOString().slice(0, 10);
+}
+
+function dateAt(daysFromNow: number, hour: number, minute: number, timezone: string): Date {
+  const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  return zonedTimeToUtc(dateStrOffset(daysFromNow), timeStr, timezone);
 }
 
 function addMinutes(date: Date, minutes: number): Date {
@@ -31,6 +36,7 @@ interface DemoTenant {
   phone: string;
   address: string;
   capacity: number;
+  timezone: string;
   ownerEmail: string;
   ownerName: string;
   services: { name: string; durationMinutes: number; price: number }[];
@@ -45,6 +51,7 @@ const DEMO_TENANTS: DemoTenant[] = [
     phone: "(555) 201-4488",
     address: "48 Harbor Blvd, Riverside",
     capacity: 3,
+    timezone: "America/Los_Angeles",
     ownerEmail: "owner@sparkle-auto-spa.demo",
     ownerName: "Maria Chen",
     services: [
@@ -73,6 +80,7 @@ const DEMO_TENANTS: DemoTenant[] = [
     phone: "(555) 640-2255",
     address: "1290 Route 9, Millbrook",
     capacity: 4,
+    timezone: "America/Chicago",
     ownerEmail: "owner@quickwash-express.demo",
     ownerName: "Deshawn Miller",
     services: [
@@ -98,6 +106,7 @@ const DEMO_TENANTS: DemoTenant[] = [
     phone: "(555) 882-3300",
     address: "77 Kessler St, Downtown",
     capacity: 2,
+    timezone: "America/New_York",
     ownerEmail: "owner@downtown-car-care.demo",
     ownerName: "Angela Ruiz",
     services: [
@@ -139,6 +148,7 @@ async function main() {
         phone: demo.phone,
         address: demo.address,
         capacity: demo.capacity,
+        timezone: demo.timezone,
         subscriptionStatus: "ACTIVE",
         users: {
           create: {
@@ -164,7 +174,7 @@ async function main() {
 
     for (const b of demo.bookings) {
       const service = tenant.services[b.serviceIndex];
-      const startTime = dateAt(b.daysFromNow, b.hour, b.minute);
+      const startTime = dateAt(b.daysFromNow, b.hour, b.minute ?? 0, demo.timezone);
       const endTime = addMinutes(startTime, service.durationMinutes);
 
       await prisma.booking.create({

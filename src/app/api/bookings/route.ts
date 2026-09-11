@@ -33,7 +33,7 @@ export async function GET(req: Request) {
         : {}),
     };
 
-    const [bookings, total] = await Promise.all([
+    const [bookings, total, tenant] = await Promise.all([
       prisma.booking.findMany({
         where,
         orderBy: { startTime: when === "past" ? "desc" : "asc" },
@@ -42,9 +42,10 @@ export async function GET(req: Request) {
         include: { service: { select: { name: true } } },
       }),
       prisma.booking.count({ where }),
+      prisma.tenant.findUnique({ where: { id: tenantId }, select: { timezone: true } }),
     ]);
 
-    return NextResponse.json({ bookings, total, page, pageSize });
+    return NextResponse.json({ bookings, total, page, pageSize, timezone: tenant?.timezone });
   } catch (err) {
     if (err instanceof UnauthorizedError) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     throw err;

@@ -11,7 +11,7 @@ interface Booking {
   startTime: string;
   status: string;
   service: { name: string };
-  tenant: { id: string; name: string; slug: string };
+  tenant: { id: string; name: string; slug: string; timezone: string };
 }
 
 const BOOKING_STATUSES = ["CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"];
@@ -109,7 +109,11 @@ export default function AdminBookingsPage() {
                 {bookings.map((b) => (
                   <tr key={b.id}>
                     <td>
-                      {new Date(b.startTime).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                      {new Date(b.startTime).toLocaleString(undefined, {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZone: b.tenant.timezone,
+                      })}
                     </td>
                     <td>
                       <Link href={`/admin/tenants/${b.tenant.id}`} className="text-[var(--primary)] underline">

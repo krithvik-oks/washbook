@@ -13,15 +13,21 @@ interface Slot {
   startTime: string;
 }
 
-function todayISO(): string {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 10);
+function todayInTimezone(timezone: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(new Date());
 }
 
-export function BookingWidget({ slug, services }: { slug: string; services: Service[] }) {
+export function BookingWidget({
+  slug,
+  timezone,
+  services,
+}: {
+  slug: string;
+  timezone: string;
+  services: Service[];
+}) {
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
-  const [date, setDate] = useState(todayISO());
+  const [date, setDate] = useState(() => todayInTimezone(timezone));
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -79,7 +85,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
       <div className="card border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-900/20">
         <h2 className="font-semibold text-emerald-900 dark:text-emerald-300">Booking confirmed!</h2>
         <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-400">
-          {new Date(confirmed).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })}
+          {new Date(confirmed).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short", timeZone: timezone })}
         </p>
         <p className="mt-2 text-sm text-emerald-800 dark:text-emerald-400">See you then, {name}.</p>
       </div>
@@ -103,7 +109,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
           Date
           <input
             type="date"
-            min={todayISO()}
+            min={todayInTimezone(timezone)}
             value={date}
             onChange={(e) => setDate(e.target.value)}
             className="input"
@@ -112,7 +118,9 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
       </div>
 
       <div>
-        <p className="text-sm font-medium text-[var(--foreground)]">Available times</p>
+        <p className="text-sm font-medium text-[var(--foreground)]">
+          Available times <span className="font-normal text-[var(--muted)]">(business&apos;s local time)</span>
+        </p>
         {loadingSlots ? (
           <p className="mt-2 text-sm text-[var(--muted)]">Loading…</p>
         ) : !slots || slots.length === 0 ? (
@@ -129,7 +137,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
                     : "border-[var(--border)] hover:border-[var(--primary)]"
                 }`}
               >
-                {new Date(slot.startTime).toLocaleTimeString(undefined, { timeStyle: "short" })}
+                {new Date(slot.startTime).toLocaleTimeString(undefined, { timeStyle: "short", timeZone: timezone })}
               </button>
             ))}
           </div>
