@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PLATFORM_ADMIN
+  BUSINESS_OWNER
+  STAFF
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model Tenant {
+  id                   String             @id @default(cuid())
+  slug                 String             @unique
+  name                 String
+  phone                String?
+  address              String?
+  timezone             String             @default("America/New_York")
+  capacity             Int                @default(1)
+  subscriptionStatus   SubscriptionStatus @default(TRIALING)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  trialEndsAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  users              User[]
+  services           Service[]
+  availabilityRules  AvailabilityRule[]
+  bookings           Booking[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(BUSINESS_OWNER)
+  tenantId     String?
+  createdAt    DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  tenantId        String
+  name            String
+  description     String?
+  durationMinutes Int
+  price           Decimal  @db.Decimal(10, 2)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([tenantId])
+}
+
+model AvailabilityRule {
+  id        String @id @default(cuid())
+  tenantId  String
+  dayOfWeek Int // 0 = Sunday ... 6 = Saturday
+  openTime  String // "HH:mm"
+  closeTime String // "HH:mm"
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, dayOfWeek])
+  @@index([tenantId])
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  tenantId      String
+  serviceId     String
+  customerName  String
+  customerPhone String
+  customerEmail String?
+  startTime     DateTime
+  endTime       DateTime
+  status        BookingStatus @default(CONFIRMED)
+  createdAt     DateTime      @default(now())
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId, startTime])
+}
+
+model Plan {
+  id            String   @id @default(cuid())
+  name          String
+  priceMonthly  Decimal  @db.Decimal(10, 2)
+  stripePriceId String?  @unique
+  createdAt     DateTime @default(now())
+}
