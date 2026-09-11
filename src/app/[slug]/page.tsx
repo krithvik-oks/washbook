@@ -17,27 +17,29 @@ export default async function TenantBookingPage({
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
-      <h1 className="text-2xl font-semibold">{tenant.name}</h1>
-      {tenant.address && <p className="mt-1 text-sm text-neutral-500">{tenant.address}</p>}
-      {tenant.phone && <p className="text-sm text-neutral-500">{tenant.phone}</p>}
+      <div className="card p-6">
+        <h1 className="text-2xl font-semibold">{tenant.name}</h1>
+        {tenant.address && <p className="mt-1 text-sm text-[var(--muted)]">{tenant.address}</p>}
+        {tenant.phone && <p className="text-sm text-[var(--muted)]">{tenant.phone}</p>}
 
-      {tenant.services.length === 0 ? (
-        <p className="mt-8 text-sm text-neutral-500">
-          This business hasn&apos;t added any services yet.
-        </p>
-      ) : (
-        <div className="mt-8">
-          <BookingWidget
-            slug={tenant.slug}
-            services={tenant.services.map((s) => ({
-              id: s.id,
-              name: s.name,
-              durationMinutes: s.durationMinutes,
-              price: s.price.toString(),
-            }))}
-          />
-        </div>
-      )}
+        {tenant.services.length === 0 ? (
+          <p className="mt-8 text-sm text-[var(--muted)]">
+            This business hasn&apos;t added any services yet.
+          </p>
+        ) : (
+          <div className="mt-8">
+            <BookingWidget
+              slug={tenant.slug}
+              services={tenant.services.map((s) => ({
+                id: s.id,
+                name: s.name,
+                durationMinutes: s.durationMinutes,
+                price: s.price.toString(),
+              }))}
+            />
+          </div>
+        )}
+      </div>
     </main>
   );
 }

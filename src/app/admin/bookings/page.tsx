@@ -64,7 +64,7 @@ export default function AdminBookingsPage() {
   return (
     <div>
       <h1 className="text-lg font-semibold">All bookings</h1>
-      <p className="mt-1 text-sm text-neutral-500">{total} bookings across every tenant.</p>
+      <p className="mt-1 text-sm text-[var(--muted)]">{total} bookings across every tenant.</p>
 
       <div className="mt-4 flex flex-wrap gap-3">
         <input
@@ -84,45 +84,49 @@ export default function AdminBookingsPage() {
       </div>
 
       {!bookings ? (
-        <p className="mt-4 text-sm text-neutral-500">Loading…</p>
+        <p className="mt-4 text-sm text-[var(--muted)]">Loading…</p>
       ) : (
         <>
-          <div className="mt-4 overflow-x-auto rounded-md border border-neutral-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500">
+          <div className="table-shell mt-4">
+            <table>
+              <thead>
                 <tr>
-                  <th className="px-4 py-2 font-medium">When</th>
-                  <th className="px-4 py-2 font-medium">Business</th>
-                  <th className="px-4 py-2 font-medium">Service</th>
-                  <th className="px-4 py-2 font-medium">Customer</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
+                  <th>When</th>
+                  <th>Business</th>
+                  <th>Service</th>
+                  <th>Customer</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-3 text-neutral-500">
+                    <td colSpan={5} className="text-[var(--muted)]">
                       No bookings match your filters.
                     </td>
                   </tr>
                 )}
                 {bookings.map((b) => (
-                  <tr key={b.id} className="border-t border-neutral-100">
-                    <td className="px-4 py-2">
+                  <tr key={b.id}>
+                    <td>
                       {new Date(b.startTime).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                     </td>
-                    <td className="px-4 py-2">
-                      <Link href={`/admin/tenants/${b.tenant.id}`} className="underline">
+                    <td>
+                      <Link href={`/admin/tenants/${b.tenant.id}`} className="text-[var(--primary)] underline">
                         {b.tenant.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-2">{b.service.name}</td>
-                    <td className="px-4 py-2">
+                    <td>{b.service.name}</td>
+                    <td>
                       {b.customerName}
-                      <span className="block text-xs text-neutral-500">{b.customerPhone}</span>
+                      <span className="block text-xs text-[var(--muted)]">{b.customerPhone}</span>
                     </td>
-                    <td className="px-4 py-2">
-                      <select className="input" value={b.status} onChange={(e) => updateBookingStatus(b.id, e.target.value)}>
+                    <td>
+                      <select
+                        className="input"
+                        value={b.status}
+                        onChange={(e) => updateBookingStatus(b.id, e.target.value)}
+                      >
                         {BOOKING_STATUSES.map((s) => (
                           <option key={s} value={s}>
                             {s}

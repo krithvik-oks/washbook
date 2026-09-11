@@ -41,13 +41,13 @@ export default function AdminSettingsPage() {
     setSaved(true);
   }
 
-  if (loading) return <p className="text-sm text-neutral-500">Loading…</p>;
+  if (loading) return <p className="text-sm text-[var(--muted)]">Loading…</p>;
 
   return (
-    <div className="max-w-sm">
+    <div className="card max-w-sm p-6">
       <h1 className="text-lg font-semibold">Settings</h1>
       <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+        <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
           App name
           <input
             required
@@ -60,18 +60,14 @@ export default function AdminSettingsPage() {
             className="input"
           />
         </label>
-        <p className="text-xs text-neutral-500">Shown in the admin header and the browser tab title.</p>
+        <p className="text-xs text-[var(--muted)]">Shown in the admin header and the browser tab title.</p>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="mt-1 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-        >
+        <button type="submit" disabled={saving} className="btn btn-primary mt-1">
           {saving ? "Saving…" : "Save"}
         </button>
-        {saved && <p className="text-sm text-green-700">Saved.</p>}
+        {saved && <p className="text-sm text-emerald-600">Saved.</p>}
       </form>
     </div>
   );

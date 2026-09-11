@@ -42,7 +42,7 @@ export default async function AdminReportsPage() {
     <div className="flex flex-col gap-10">
       <div>
         <h1 className="text-lg font-semibold">Reports</h1>
-        <p className="mt-1 text-sm text-neutral-500">A quick snapshot of platform activity.</p>
+        <p className="mt-1 text-sm text-[var(--muted)]">A quick snapshot of platform activity.</p>
       </div>
 
       <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -69,21 +69,21 @@ export default async function AdminReportsPage() {
       <section>
         <h2 className="font-semibold">Busiest tenants</h2>
         {topTenants.length === 0 ? (
-          <p className="mt-2 text-sm text-neutral-500">No bookings yet.</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">No bookings yet.</p>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500">
+          <div className="table-shell mt-3">
+            <table>
+              <thead>
                 <tr>
-                  <th className="px-4 py-2 font-medium">Business</th>
-                  <th className="px-4 py-2 font-medium">Bookings</th>
+                  <th>Business</th>
+                  <th>Bookings</th>
                 </tr>
               </thead>
               <tbody>
                 {topTenants.map((row, i) => (
-                  <tr key={row.tenant?.slug ?? i} className="border-t border-neutral-100">
-                    <td className="px-4 py-2">{row.tenant?.name ?? "(deleted tenant)"}</td>
-                    <td className="px-4 py-2">{row.count}</td>
+                  <tr key={row.tenant?.slug ?? i}>
+                    <td>{row.tenant?.name ?? "(deleted tenant)"}</td>
+                    <td>{row.count}</td>
                   </tr>
                 ))}
               </tbody>
@@ -97,24 +97,24 @@ export default async function AdminReportsPage() {
 
 function StatCard({ label, value, sub }: { label: string; value: number; sub: string }) {
   return (
-    <div className="rounded-md border border-neutral-200 p-4">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{value}</p>
-      <p className="mt-1 text-xs text-neutral-400">{sub}</p>
+    <div className="card p-4">
+      <p className="text-xs text-[var(--muted)]">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-[var(--primary)]">{value}</p>
+      <p className="mt-1 text-xs text-[var(--muted)]">{sub}</p>
     </div>
   );
 }
 
 function BreakdownTable({ rows }: { rows: { label: string; count: number }[] }) {
-  if (rows.length === 0) return <p className="mt-2 text-sm text-neutral-500">No data yet.</p>;
+  if (rows.length === 0) return <p className="mt-2 text-sm text-[var(--muted)]">No data yet.</p>;
   return (
-    <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-      <table className="w-full text-left text-sm">
+    <div className="table-shell mt-3">
+      <table>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.label} className="border-t border-neutral-100 first:border-t-0">
-              <td className="px-4 py-2">{r.label}</td>
-              <td className="px-4 py-2 text-right">{r.count}</td>
+            <tr key={r.label}>
+              <td>{r.label}</td>
+              <td className="text-right">{r.count}</td>
             </tr>
           ))}
         </tbody>

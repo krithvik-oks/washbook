@@ -88,9 +88,9 @@ export default function ServicesPage() {
       <section>
         <h1 className="text-lg font-semibold">Services</h1>
         {loading ? (
-          <p className="mt-2 text-sm text-neutral-500">Loading…</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">Loading…</p>
         ) : services.length === 0 ? (
-          <p className="mt-2 text-sm text-neutral-500">No services yet — add your first one below.</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">No services yet — add your first one below.</p>
         ) : (
           <>
             <input
@@ -99,41 +99,45 @@ export default function ServicesPage() {
               placeholder="Search services…"
               className="input mt-3 max-w-xs"
             />
-            <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-neutral-50 text-neutral-500">
+            <div className="table-shell mt-3">
+              <table>
+                <thead>
                   <tr>
-                    <th className="px-4 py-2 font-medium">Name</th>
-                    <th className="px-4 py-2 font-medium">Duration</th>
-                    <th className="px-4 py-2 font-medium">Price</th>
-                    <th className="px-4 py-2 font-medium">Status</th>
-                    <th className="px-4 py-2 font-medium"></th>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredServices.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-3 text-neutral-500">
+                      <td colSpan={5} className="text-[var(--muted)]">
                         No services match &quot;{search}&quot;.
                       </td>
                     </tr>
                   )}
                   {filteredServices.map((s) => (
-                  <tr key={s.id} className="border-t border-neutral-100">
-                    <td className="px-4 py-2">{s.name}</td>
-                    <td className="px-4 py-2">{s.durationMinutes} min</td>
-                    <td className="px-4 py-2">${s.price}</td>
-                    <td className="px-4 py-2">{s.active ? "Active" : "Inactive"}</td>
-                    <td className="px-4 py-2 text-right">
-                      <button onClick={() => toggleActive(s)} className="mr-3 text-neutral-600 underline">
-                        {s.active ? "Deactivate" : "Activate"}
-                      </button>
-                      <button onClick={() => remove(s)} className="text-red-600 underline">
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                    <tr key={s.id}>
+                      <td>{s.name}</td>
+                      <td>{s.durationMinutes} min</td>
+                      <td>${s.price}</td>
+                      <td>
+                        <span className={`badge ${s.active ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" : "bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"}`}>
+                          {s.active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="text-right">
+                        <button onClick={() => toggleActive(s)} className="link-muted mr-3">
+                          {s.active ? "Deactivate" : "Activate"}
+                        </button>
+                        <button onClick={() => remove(s)} className="link-danger">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -144,11 +148,11 @@ export default function ServicesPage() {
       <section className="max-w-sm">
         <h2 className="text-lg font-semibold">Add a service</h2>
         <form onSubmit={handleCreate} className="mt-3 flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Name
             <input required value={name} onChange={(e) => setName(e.target.value)} className="input" placeholder="Basic wash" />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Duration (minutes)
             <input
               required
@@ -160,7 +164,7 @@ export default function ServicesPage() {
               className="input"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Price ($)
             <input
               required
@@ -173,13 +177,9 @@ export default function ServicesPage() {
             />
           </label>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-1 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-          >
+          <button type="submit" disabled={submitting} className="btn btn-primary mt-1">
             {submitting ? "Adding…" : "Add service"}
           </button>
         </form>

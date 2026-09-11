@@ -1,40 +1,180 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --muted: #64748b;
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --primary-foreground: #ffffff;
+  --accent-soft: #f0fdfa;
+  --danger: #dc2626;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0f14;
+    --foreground: #e7edf1;
+    --card: #101820;
+    --border: #1f2b34;
+    --muted: #8ea0ac;
+    --primary: #2dd4bf;
+    --primary-hover: #5eead4;
+    --primary-foreground: #052e2b;
+    --accent-soft: #0c1f1c;
+    --danger: #f87171;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
+a {
+  color: inherit;
+}
+
+/* Form controls */
+
 .input {
-  border-radius: 0.375rem;
-  border: 1px solid #d4d4d4;
-  background: var(--background);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--foreground);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .input:focus {
-  outline: 2px solid #171717;
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--primary);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.link-danger {
+  color: var(--danger);
+  text-decoration: underline;
+}
+
+.link-muted {
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+/* Surfaces */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.table-shell {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.table-shell table {
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.table-shell thead {
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+
+.table-shell th {
+  padding: 0.625rem 1rem;
+  font-weight: 500;
+}
+
+.table-shell td {
+  padding: 0.625rem 1rem;
+}
+
+.table-shell tbody tr {
+  border-top: 1px solid var(--border);
+}
+
+.table-shell tbody tr:hover {
+  background: var(--accent-soft);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
 }

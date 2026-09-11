@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Pagination } from "@/components/pagination";
+import { SubscriptionStatusBadge } from "@/components/status-badge";
 
 interface Tenant {
   id: string;
@@ -13,13 +14,6 @@ interface Tenant {
   createdAt: string;
   _count: { services: number; bookings: number; users: number };
 }
-
-const STATUS_STYLES: Record<string, string> = {
-  TRIALING: "bg-blue-100 text-blue-800",
-  ACTIVE: "bg-green-100 text-green-800",
-  PAST_DUE: "bg-amber-100 text-amber-800",
-  CANCELED: "bg-neutral-200 text-neutral-700",
-};
 
 const PAGE_SIZE = 10;
 
@@ -74,8 +68,8 @@ export default function AdminTenantsPage() {
   return (
     <div>
       <h1 className="text-lg font-semibold">Tenants</h1>
-      <p className="mt-1 text-sm text-neutral-500">{total} businesses on the platform.</p>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      <p className="mt-1 text-sm text-[var(--muted)]">{total} businesses on the platform.</p>
+      {error && <p className="mt-2 text-sm text-[var(--danger)]">{error}</p>}
 
       <div className="mt-4 flex flex-wrap gap-3">
         <input
@@ -94,49 +88,47 @@ export default function AdminTenantsPage() {
       </div>
 
       {!tenants ? (
-        <p className="mt-4 text-sm text-neutral-500">Loading…</p>
+        <p className="mt-4 text-sm text-[var(--muted)]">Loading…</p>
       ) : (
         <>
-          <div className="mt-4 overflow-x-auto rounded-md border border-neutral-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500">
+          <div className="table-shell mt-4">
+            <table>
+              <thead>
                 <tr>
-                  <th className="px-4 py-2 font-medium">Business</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                  <th className="px-4 py-2 font-medium">Bays</th>
-                  <th className="px-4 py-2 font-medium">Services</th>
-                  <th className="px-4 py-2 font-medium">Bookings</th>
-                  <th className="px-4 py-2 font-medium">Joined</th>
-                  <th className="px-4 py-2 font-medium"></th>
+                  <th>Business</th>
+                  <th>Status</th>
+                  <th>Bays</th>
+                  <th>Services</th>
+                  <th>Bookings</th>
+                  <th>Joined</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {tenants.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-neutral-500">
+                    <td colSpan={7} className="text-[var(--muted)]">
                       No tenants match your filters.
                     </td>
                   </tr>
                 )}
                 {tenants.map((t) => (
-                  <tr key={t.id} className="border-t border-neutral-100">
-                    <td className="px-4 py-2">
-                      <Link href={`/admin/tenants/${t.id}`} className="font-medium underline">
+                  <tr key={t.id}>
+                    <td>
+                      <Link href={`/admin/tenants/${t.id}`} className="font-medium text-[var(--primary)] underline">
                         {t.name}
                       </Link>
-                      <span className="block text-xs text-neutral-500">/{t.slug}</span>
+                      <span className="block text-xs text-[var(--muted)]">/{t.slug}</span>
                     </td>
-                    <td className="px-4 py-2">
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[t.subscriptionStatus]}`}>
-                        {t.subscriptionStatus}
-                      </span>
+                    <td>
+                      <SubscriptionStatusBadge status={t.subscriptionStatus} />
                     </td>
-                    <td className="px-4 py-2">{t.capacity}</td>
-                    <td className="px-4 py-2">{t._count.services}</td>
-                    <td className="px-4 py-2">{t._count.bookings}</td>
-                    <td className="px-4 py-2">{new Date(t.createdAt).toLocaleDateString()}</td>
-                    <td className="px-4 py-2 text-right">
-                      <button onClick={() => remove(t)} className="text-red-600 underline">
+                    <td>{t.capacity}</td>
+                    <td>{t._count.services}</td>
+                    <td>{t._count.bookings}</td>
+                    <td>{new Date(t.createdAt).toLocaleDateString()}</td>
+                    <td className="text-right">
+                      <button onClick={() => remove(t)} className="link-danger">
                         Delete
                       </button>
                     </td>

@@ -81,26 +81,26 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
     load();
   }
 
-  if (!tenant) return <p className="text-sm text-neutral-500">Loading…</p>;
+  if (!tenant) return <p className="text-sm text-[var(--muted)]">Loading…</p>;
 
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <Link href="/admin/tenants" className="text-sm text-neutral-500 underline">
+        <Link href="/admin/tenants" className="text-sm text-[var(--muted)] underline">
           ← All tenants
         </Link>
         <div className="mt-2 flex items-center justify-between">
           <h1 className="text-lg font-semibold">{tenant.name}</h1>
-          <Link href={`/${tenant.slug}`} target="_blank" className="text-sm underline">
+          <Link href={`/${tenant.slug}`} target="_blank" className="text-sm text-[var(--primary)] underline">
             View public page →
           </Link>
         </div>
       </div>
 
-      <section className="max-w-lg">
+      <section className="card max-w-lg p-6">
         <h2 className="font-semibold">Business details</h2>
         <div className="mt-3 flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Name
             <input
               className="input"
@@ -110,7 +110,7 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
             />
           </label>
           <div className="flex gap-3">
-            <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-neutral-700">
+            <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
               Phone
               <input
                 className="input"
@@ -119,7 +119,7 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
                 onBlur={() => saveTenant({ phone: tenant.phone })}
               />
             </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-neutral-700">
+            <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
               Bays / capacity
               <input
                 type="number"
@@ -132,7 +132,7 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
               />
             </label>
           </div>
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Address
             <input
               className="input"
@@ -141,7 +141,7 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
               onBlur={() => saveTenant({ address: tenant.address })}
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
             Subscription status
             <select
               className="input"
@@ -155,28 +155,28 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
               ))}
             </select>
           </label>
-          {saving && <p className="text-xs text-neutral-500">Saving…</p>}
-          {saved && !saving && <p className="text-xs text-green-700">Saved.</p>}
+          {saving && <p className="text-xs text-[var(--muted)]">Saving…</p>}
+          {saved && !saving && <p className="text-xs text-emerald-600">Saved.</p>}
         </div>
       </section>
 
       <section>
         <h2 className="font-semibold">Users</h2>
-        <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-neutral-50 text-neutral-500">
+        <div className="table-shell mt-3">
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Email</th>
-                <th className="px-4 py-2 font-medium">Role</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {tenant.users.map((u) => (
-                <tr key={u.id} className="border-t border-neutral-100">
-                  <td className="px-4 py-2">{u.name}</td>
-                  <td className="px-4 py-2">{u.email}</td>
-                  <td className="px-4 py-2">{u.role}</td>
+                <tr key={u.id}>
+                  <td>{u.name}</td>
+                  <td>{u.email}</td>
+                  <td>{u.role}</td>
                 </tr>
               ))}
             </tbody>
@@ -186,36 +186,46 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
 
       <section>
         <h2 className="font-semibold">Services</h2>
-        <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-neutral-50 text-neutral-500">
+        <div className="table-shell mt-3">
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Duration</th>
-                <th className="px-4 py-2 font-medium">Price</th>
-                <th className="px-4 py-2 font-medium">Status</th>
-                <th className="px-4 py-2 font-medium"></th>
+                <th>Name</th>
+                <th>Duration</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {tenant.services.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-3 text-neutral-500">
+                  <td colSpan={5} className="text-[var(--muted)]">
                     No services yet.
                   </td>
                 </tr>
               )}
               {tenant.services.map((s) => (
-                <tr key={s.id} className="border-t border-neutral-100">
-                  <td className="px-4 py-2">{s.name}</td>
-                  <td className="px-4 py-2">{s.durationMinutes} min</td>
-                  <td className="px-4 py-2">${s.price}</td>
-                  <td className="px-4 py-2">{s.active ? "Active" : "Inactive"}</td>
-                  <td className="px-4 py-2 text-right">
-                    <button onClick={() => toggleService(s.id, s.active)} className="mr-3 text-neutral-600 underline">
+                <tr key={s.id}>
+                  <td>{s.name}</td>
+                  <td>{s.durationMinutes} min</td>
+                  <td>${s.price}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        s.active
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+                          : "bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                      }`}
+                    >
+                      {s.active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="text-right">
+                    <button onClick={() => toggleService(s.id, s.active)} className="link-muted mr-3">
                       {s.active ? "Deactivate" : "Activate"}
                     </button>
-                    <button onClick={() => deleteService(s.id)} className="text-red-600 underline">
+                    <button onClick={() => deleteService(s.id)} className="link-danger">
                       Delete
                     </button>
                   </td>
@@ -228,35 +238,35 @@ export default function AdminTenantDetailPage({ params }: { params: Promise<{ id
 
       <section>
         <h2 className="font-semibold">Recent bookings</h2>
-        <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-neutral-50 text-neutral-500">
+        <div className="table-shell mt-3">
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-2 font-medium">When</th>
-                <th className="px-4 py-2 font-medium">Service</th>
-                <th className="px-4 py-2 font-medium">Customer</th>
-                <th className="px-4 py-2 font-medium">Status</th>
+                <th>When</th>
+                <th>Service</th>
+                <th>Customer</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {tenant.bookings.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-3 text-neutral-500">
+                  <td colSpan={4} className="text-[var(--muted)]">
                     No bookings yet.
                   </td>
                 </tr>
               )}
               {tenant.bookings.map((b) => (
-                <tr key={b.id} className="border-t border-neutral-100">
-                  <td className="px-4 py-2">
+                <tr key={b.id}>
+                  <td>
                     {new Date(b.startTime).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                   </td>
-                  <td className="px-4 py-2">{b.service.name}</td>
-                  <td className="px-4 py-2">
+                  <td>{b.service.name}</td>
+                  <td>
                     {b.customerName}
-                    <span className="block text-xs text-neutral-500">{b.customerPhone}</span>
+                    <span className="block text-xs text-[var(--muted)]">{b.customerPhone}</span>
                   </td>
-                  <td className="px-4 py-2">
+                  <td>
                     <select
                       className="input"
                       value={b.status}

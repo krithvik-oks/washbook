@@ -76,12 +76,12 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
 
   if (confirmed) {
     return (
-      <div className="rounded-md border border-green-200 bg-green-50 p-6">
-        <h2 className="font-semibold text-green-900">Booking confirmed!</h2>
-        <p className="mt-1 text-sm text-green-800">
+      <div className="card border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-900/20">
+        <h2 className="font-semibold text-emerald-900 dark:text-emerald-300">Booking confirmed!</h2>
+        <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-400">
           {new Date(confirmed).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })}
         </p>
-        <p className="mt-2 text-sm text-green-800">See you then, {name}.</p>
+        <p className="mt-2 text-sm text-emerald-800 dark:text-emerald-400">See you then, {name}.</p>
       </div>
     );
   }
@@ -89,7 +89,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row">
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-neutral-700">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
           Service
           <select value={serviceId} onChange={(e) => setServiceId(e.target.value)} className="input">
             {services.map((s) => (
@@ -99,7 +99,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
             ))}
           </select>
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-neutral-700">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-[var(--foreground)]">
           Date
           <input
             type="date"
@@ -112,21 +112,21 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
       </div>
 
       <div>
-        <p className="text-sm font-medium text-neutral-700">Available times</p>
+        <p className="text-sm font-medium text-[var(--foreground)]">Available times</p>
         {loadingSlots ? (
-          <p className="mt-2 text-sm text-neutral-500">Loading…</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">Loading…</p>
         ) : !slots || slots.length === 0 ? (
-          <p className="mt-2 text-sm text-neutral-500">No open times that day. Try another date.</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">No open times that day. Try another date.</p>
         ) : (
           <div className="mt-2 flex flex-wrap gap-2">
             {slots.map((slot) => (
               <button
                 key={slot.startTime}
                 onClick={() => setSelectedSlot(slot.startTime)}
-                className={`rounded-md border px-3 py-1.5 text-sm ${
+                className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
                   selectedSlot === slot.startTime
-                    ? "border-neutral-900 bg-neutral-900 text-white"
-                    : "border-neutral-300"
+                    ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]"
+                    : "border-[var(--border)] hover:border-[var(--primary)]"
                 }`}
               >
                 {new Date(slot.startTime).toLocaleTimeString(undefined, { timeStyle: "short" })}
@@ -137,7 +137,7 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
       </div>
 
       {selectedSlot && (
-        <form onSubmit={handleBook} className="flex flex-col gap-3 rounded-md border border-neutral-200 p-4">
+        <form onSubmit={handleBook} className="card flex flex-col gap-3 p-4">
           <p className="text-sm font-medium">Your details</p>
           <input required placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="input" />
           <input required placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="input" />
@@ -148,12 +148,8 @@ export function BookingWidget({ slug, services }: { slug: string; services: Serv
             onChange={(e) => setEmail(e.target.value)}
             className="input"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-          >
+          {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn btn-primary">
             {submitting ? "Booking…" : "Confirm booking"}
           </button>
         </form>

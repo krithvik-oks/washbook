@@ -18,26 +18,18 @@ export function Pagination({
   const to = Math.min(page * pageSize, total);
 
   return (
-    <div className="mt-3 flex items-center justify-between text-sm text-neutral-500">
+    <div className="mt-3 flex items-center justify-between text-sm text-[var(--muted)]">
       <p>
         {from}–{to} of {total}
       </p>
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => onPageChange(page - 1)}
-          disabled={page <= 1}
-          className="rounded-md border border-neutral-300 px-3 py-1 disabled:opacity-40"
-        >
+        <button onClick={() => onPageChange(page - 1)} disabled={page <= 1} className="btn btn-secondary btn-sm">
           Prev
         </button>
         <span>
           Page {page} of {totalPages}
         </span>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={page >= totalPages}
-          className="rounded-md border border-neutral-300 px-3 py-1 disabled:opacity-40"
-        >
+        <button onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className="btn btn-secondary btn-sm">
           Next
         </button>
       </div>

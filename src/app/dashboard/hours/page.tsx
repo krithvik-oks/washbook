@@ -38,10 +38,10 @@ export default function HoursPage() {
     setSaved(true);
   }
 
-  if (!week) return <p className="text-sm text-neutral-500">Loading…</p>;
+  if (!week) return <p className="text-sm text-[var(--muted)]">Loading…</p>;
 
   return (
-    <div className="max-w-lg">
+    <div className="card max-w-lg p-6">
       <h1 className="text-lg font-semibold">Operating hours</h1>
       <div className="mt-4 flex flex-col gap-3">
         {week.map((day) => (
@@ -51,6 +51,7 @@ export default function HoursPage() {
                 type="checkbox"
                 checked={!day.closed}
                 onChange={(e) => update(day.dayOfWeek, { closed: !e.target.checked })}
+                className="accent-[var(--primary)]"
               />
               {DAY_NAMES[day.dayOfWeek]}
             </label>
@@ -61,7 +62,7 @@ export default function HoursPage() {
               onChange={(e) => update(day.dayOfWeek, { openTime: e.target.value })}
               className="input"
             />
-            <span className="text-neutral-400">to</span>
+            <span className="text-[var(--muted)]">to</span>
             <input
               type="time"
               disabled={day.closed}
@@ -73,14 +74,10 @@ export default function HoursPage() {
         ))}
       </div>
 
-      <button
-        onClick={save}
-        disabled={saving}
-        className="mt-6 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-      >
+      <button onClick={save} disabled={saving} className="btn btn-primary mt-6">
         {saving ? "Saving…" : "Save hours"}
       </button>
-      {saved && <span className="ml-3 text-sm text-green-700">Saved.</span>}
+      {saved && <span className="ml-3 text-sm text-emerald-600">Saved.</span>}
     </div>
   );
 }
