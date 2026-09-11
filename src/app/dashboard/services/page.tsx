@@ -21,6 +21,11 @@ export default function ServicesPage() {
   const [price, setPrice] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const [search, setSearch] = useState("");
+  const filteredServices = services.filter((s) =>
+    s.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
+
   async function load() {
     setLoading(true);
     const res = await fetch("/api/services");
@@ -87,19 +92,33 @@ export default function ServicesPage() {
         ) : services.length === 0 ? (
           <p className="mt-2 text-sm text-neutral-500">No services yet — add your first one below.</p>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Name</th>
-                  <th className="px-4 py-2 font-medium">Duration</th>
-                  <th className="px-4 py-2 font-medium">Price</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                  <th className="px-4 py-2 font-medium"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {services.map((s) => (
+          <>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search services…"
+              className="input mt-3 max-w-xs"
+            />
+            <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-neutral-50 text-neutral-500">
+                  <tr>
+                    <th className="px-4 py-2 font-medium">Name</th>
+                    <th className="px-4 py-2 font-medium">Duration</th>
+                    <th className="px-4 py-2 font-medium">Price</th>
+                    <th className="px-4 py-2 font-medium">Status</th>
+                    <th className="px-4 py-2 font-medium"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredServices.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-3 text-neutral-500">
+                        No services match &quot;{search}&quot;.
+                      </td>
+                    </tr>
+                  )}
+                  {filteredServices.map((s) => (
                   <tr key={s.id} className="border-t border-neutral-100">
                     <td className="px-4 py-2">{s.name}</td>
                     <td className="px-4 py-2">{s.durationMinutes} min</td>
@@ -115,9 +134,10 @@ export default function ServicesPage() {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </section>
 

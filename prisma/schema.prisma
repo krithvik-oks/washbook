@@ -115,6 +115,12 @@ model Booking {
   @@index([tenantId, startTime])
 }
 
+model AppSettings {
+  id        String   @id @default("singleton")
+  appName   String   @default("WashBook")
+  updatedAt DateTime @updatedAt
+}
+
 model Plan {
   id            String   @id @default(cuid())
   name          String
