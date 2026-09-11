@@ -41,8 +41,20 @@ async function main() {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: "admin@washbook.test" },
+    update: {},
+    create: {
+      email: "admin@washbook.test",
+      passwordHash,
+      name: "Platform Admin",
+      role: "PLATFORM_ADMIN",
+    },
+  });
+
   console.log(`Seeded tenant "${tenant.name}" at /${tenant.slug}`);
-  console.log("Login: owner@demo-wash.test / password123");
+  console.log("Business login: owner@demo-wash.test / password123");
+  console.log("Admin login: admin@washbook.test / password123");
 }
 
 main()

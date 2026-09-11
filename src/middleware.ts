@@ -15,6 +15,10 @@ export default auth((req) => {
   if (pathname.startsWith("/admin") && req.auth?.user.role !== "PLATFORM_ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
   }
+
+  if (pathname.startsWith("/dashboard") && req.auth?.user.role === "PLATFORM_ADMIN") {
+    return NextResponse.redirect(new URL("/admin", req.nextUrl.origin));
+  }
 });
 
 export const config = {

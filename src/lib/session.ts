@@ -18,3 +18,15 @@ export async function requireTenantSession() {
     role: session.user.role,
   };
 }
+
+/**
+ * Returns the current session only if it belongs to a platform admin.
+ * Used by every /admin page and /api/admin/* route to gate cross-tenant access.
+ */
+export async function requireAdminSession() {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "PLATFORM_ADMIN") {
+    throw new UnauthorizedError("Not authenticated as a platform admin");
+  }
+  return { userId: session.user.id };
+}
